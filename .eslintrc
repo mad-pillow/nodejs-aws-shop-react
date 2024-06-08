@@ -20,5 +20,6 @@
     "react": {
       "version": "detect"
     }
-  }
+  },
+  "exclude": ["node_modules", "build", "aws-cdk"]
 }
