@@ -40,16 +40,12 @@ export default function CSVFileImport({ url, title }: CSVFileImportProps) {
       console.log("File to upload: ", file.name);
       console.log("Uploading to: ", response.data);
 
-      const formData = new FormData();
-      formData.append("file", file);
-
       const myHeaders = new Headers();
-      myHeaders.append("Content-Type", "multipart/form-data");
 
       const result = await fetch(response.data.url, {
         method: "PUT",
         headers: myHeaders,
-        body: formData,
+        body: file,
       });
 
       console.log("Result: ", result);
