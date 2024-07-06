@@ -1,6 +1,7 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import axios from "axios";
 
 type CSVFileImportProps = {
   url: string;
@@ -8,7 +9,7 @@ type CSVFileImportProps = {
 };
 
 export default function CSVFileImport({ url, title }: CSVFileImportProps) {
-  const [file, setFile] = React.useState<File>();
+  const [file, setFile] = React.useState<File | null>(null);
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -19,29 +20,45 @@ export default function CSVFileImport({ url, title }: CSVFileImportProps) {
   };
 
   const removeFile = () => {
-    setFile(undefined);
+    setFile(null);
   };
 
   const uploadFile = async () => {
-    console.log("uploadFile to", url);
+    if (!file) {
+      return;
+    }
 
-    // Get the presigned URL
-    // const response = await axios({
-    //   method: "GET",
-    //   url,
-    //   params: {
-    //     name: encodeURIComponent(file.name),
-    //   },
-    // });
-    // console.log("File to upload: ", file.name);
-    // console.log("Uploading to: ", response.data);
-    // const result = await fetch(response.data, {
-    //   method: "PUT",
-    //   body: file,
-    // });
-    // console.log("Result: ", result);
-    // setFile("");
+    try {
+      const response = await axios({
+        method: "GET",
+        url,
+        params: {
+          name: encodeURIComponent(file.name),
+        },
+      });
+
+      console.log("File to upload: ", file.name);
+      console.log("Uploading to: ", response.data);
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "multipart/form-data");
+
+      const result = await fetch(response.data.url, {
+        method: "PUT",
+        headers: myHeaders,
+        body: formData,
+      });
+
+      console.log("Result: ", result);
+      setFile(null);
+    } catch (error) {
+      console.error("There was an error uploading the file: ", error);
+    }
   };
+
   return (
     <Box>
       <Typography variant="h6" gutterBottom>
