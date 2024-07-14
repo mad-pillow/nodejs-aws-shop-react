@@ -1,7 +1,8 @@
-import React from "react";
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import axios from "axios";
+import React from "react";
+import { toast } from "react-toastify";
 
 type CSVFileImportProps = {
   url: string;
@@ -43,8 +44,16 @@ export default function CSVFileImport({ url, title }: CSVFileImportProps) {
         },
         headers: {
           ...authorizationToken,
+          "Content-Type": "application/json",
         },
       });
+
+      if (response.status === 200) {
+        toast("File was uploaded", {
+          type: "success",
+          position: "bottom-right",
+        });
+      }
 
       console.log("File to upload: ", file.name);
       console.log("Uploading to: ", response.data);
@@ -58,6 +67,27 @@ export default function CSVFileImport({ url, title }: CSVFileImportProps) {
       setFile(null);
     } catch (error) {
       console.error("There was an error uploading the file: ", error);
+
+      if (axios.isAxiosError(error)) {
+        let reason = "Unknown";
+
+        switch (error.response?.status) {
+          case 401:
+            reason = "Unauthorized";
+            break;
+          case 403:
+            reason = "Forbidden";
+            break;
+          case 500:
+            reason = "Internal Server Error";
+            break;
+        }
+
+        toast(`File upload failed with error: ${reason}`, {
+          type: "error",
+          position: "bottom-right",
+        });
+      }
     }
   };
 
