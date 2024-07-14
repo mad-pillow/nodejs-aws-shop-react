@@ -1,11 +1,13 @@
-import React from "react";
-import { createRoot } from "react-dom/client";
-import App from "~/components/App/App";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/material/styles";
-import { BrowserRouter } from "react-router-dom";
+import React from "react";
+import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
+import { BrowserRouter } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import App from "~/components/App/App";
 import { theme } from "~/theme";
 
 const queryClient = new QueryClient({
@@ -29,6 +31,7 @@ root.render(
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <App />
+          <ToastContainer />
         </ThemeProvider>
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
