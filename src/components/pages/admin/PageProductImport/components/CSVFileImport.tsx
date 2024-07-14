@@ -29,22 +29,28 @@ export default function CSVFileImport({ url, title }: CSVFileImportProps) {
     }
 
     try {
+      const token = localStorage.getItem("authorization_token");
+
+      const authorizationToken = token
+        ? { Authorization: `Basic ${token}` }
+        : null;
+
       const response = await axios({
         method: "GET",
         url,
         params: {
           name: encodeURIComponent(file.name),
         },
+        headers: {
+          ...authorizationToken,
+        },
       });
 
       console.log("File to upload: ", file.name);
       console.log("Uploading to: ", response.data);
 
-      const myHeaders = new Headers();
-
       const result = await fetch(response.data.url, {
         method: "PUT",
-        headers: myHeaders,
         body: file,
       });
 
